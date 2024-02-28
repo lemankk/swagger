@@ -20,7 +20,7 @@ export function ApiProperty(
 }
 
 export function createApiPropertyDecorator(
-  options: ApiPropertyOptions = {},
+  options: ApiPropertyOptions & { [key: `x-${string}`]: any } = {},
   overrideExisting = true
 ): PropertyDecorator {
   const [type, isArray] = getTypeIsArrayTuple(options.type, options.isArray);
