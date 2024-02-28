@@ -302,7 +302,13 @@ export class SchemaObjectFactory {
 
     // Allow given fields to be part of the referenced enum schema
     const additionalParams = ['description', 'deprecated', 'default']
-    const additionalFields = additionalParams.reduce((acc, param) =>
+
+    // Allow given extension fields to be part of the referenced enum schema
+    const extensionParams = Object.keys(metadata).filter((name) =>
+      name.startsWith('x-'),
+    );
+    const additionalFields = [...additionalParams, ...extensionParams]
+      .reduce((acc, param) =>
       ({...acc, ...(metadata[param] && { [param]: metadata[param] })}), {});
 
     const enumType: string = (
@@ -450,6 +456,10 @@ export class SchemaObjectFactory {
       );
       const keysToRemove = ['isArray', 'name'];
       const validMetadataObject = omit(propertyMetadata, keysToRemove);
+      const extensionParams = Object.keys(propertyMetadata).filter((name) =>
+        name.startsWith('x-'),
+      );
+      extensionParams.forEach(name => validMetadataObject[name] = propertyMetadata[name])
       properties[key] = validMetadataObject;
     });
     return {
